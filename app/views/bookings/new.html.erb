@@ -1,0 +1,11 @@
+<h1>Book Your Flight</h1>
+
+<p>You have selected the flight from <%= @flight.departure_airport.code %> to <%= @flight.arrival_airport.code %> at <%= @flight.start_datetime.strftime('%Y-%m-%d %H:%M') %>.</p>
+
+<p>Number of Passengers: <%= @num_passengers %></p>
+
+<%= form_with model: @booking, local: true do |f| %>
+  <!-- Here you would create the booking form, collecting passenger information, etc. -->
+  <%= f.submit "Confirm Booking" %>
+<% end %>
+
