@@ -1,23 +1,31 @@
 class FlightsController < ApplicationController
-    def index
-      @airports = Airport.all
-      @flights = Flight.all
-  
-      if params[:departure_airport_id].present?
-        @flights = @flights.where(departure_airport_id: params[:departure_airport_id])
-      end
-  
-      if params[:arrival_airport_id].present?
-        @flights = @flights.where(arrival_airport_id: params[:arrival_airport_id])
-      end
-  
-      if params[:date].present?
-        @flights = @flights.where("DATE(start_datetime) = ?", params[:date])
-      end
-  
-      if params[:passengers].present?
-        # Handle passengers filtering logic if needed
-      end
+  def index
+    @flights = Flight.all
+
+    # Filtruj wyniki na podstawie parametrów wyszukiwania
+    if params[:departure_airport_id].present?
+      @flights = @flights.where(departure_airport_id: params[:departure_airport_id])
+    end
+
+    if params[:arrival_airport_id].present?
+      @flights = @flights.where(arrival_airport_id: params[:arrival_airport_id])
+    end
+
+    if params[:flight_date].present?
+      date = Date.parse(params[:flight_date])
+      @flights = @flights.where('DATE(start_datetime) = ?', date)
+    end
+
+    # Przechowywanie wartości wyszukiwania, aby pozostały w formularzu
+    @departure_airports = Airport.all
+    @arrival_airports = Airport.all
+    @num_passengers = params[:passengers]
+
+    # Jeśli są dostępne loty, pokaż formularz do wyboru
+    if @flights.any?
+      @flights = @flights.map { |flight| { flight: flight, passengers: @num_passengers.to_i } }
     end
   end
+end
+
   
