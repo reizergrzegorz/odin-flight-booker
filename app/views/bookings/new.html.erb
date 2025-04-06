@@ -1,11 +1,31 @@
 <h1>Book Your Flight</h1>
 
-<p>You have selected the flight from <%= @flight.departure_airport.code %> to <%= @flight.arrival_airport.code %> at <%= @flight.start_datetime.strftime('%Y-%m-%d %H:%M') %>.</p>
-
-<p>Number of Passengers: <%= @num_passengers %></p>
-
 <%= form_with model: @booking, local: true do |f| %>
-  <!-- Here you would create the booking form, collecting passenger information, etc. -->
+  <%= f.hidden_field :flight_id, value: @flight.id %>
+  <%= f.hidden_field :num_passengers, value: @num_passengers %>
+
+  <h2>Flight: <%= @flight.departure_airport.code %> to <%= @flight.arrival_airport.code %> on <%= @flight.start_datetime.strftime('%Y-%m-%d %H:%M') %></h2>
+
+  <h3>Passenger Information</h3>
+
+  <% @booking.passengers.each_with_index do |passenger, index| %>
+    <fieldset>
+      <legend>Passenger <%= index + 1 %></legend>
+
+      <%= f.fields_for :passengers, passenger do |p| %>
+        <div>
+          <%= p.label :name, "Name" %>
+          <%= p.text_field :name %>
+        </div>
+        <div>
+          <%= p.label :email, "Email" %>
+          <%= p.email_field :email %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+
   <%= f.submit "Confirm Booking" %>
 <% end %>
+
 
