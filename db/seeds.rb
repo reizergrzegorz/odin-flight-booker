@@ -1,3 +1,10 @@
-krk = Airport.create(code: 'KRK')
-gdn = Airport.create(code: 'GDN')
-waw = Airport.create(code: 'WAW')
+krk = Airport.find(1)
+gdn = Airport.find(2)
+waw = Airport.find(3)
+
+Flight.create(departure_airport: krk, arrival_airport: gdn, start_datetime: '2025-04-10 08:00:00', duration: 60)
+Flight.create(departure_airport: gdn, arrival_airport: krk, start_datetime: '2025-04-11 09:00:00', duration: 60)
+Flight.create(departure_airport: krk, arrival_airport: waw, start_datetime: '2025-04-12 15:00:00', duration: 30)
+Flight.create(departure_airport: waw, arrival_airport: krk, start_datetime: '2025-04-13 06:30:00', duration: 30)
+Flight.create(departure_airport: gdn, arrival_airport: waw, start_datetime: '2025-04-12 15:00:00', duration: 30)
+Flight.create(departure_airport: waw, arrival_airport: gdn, start_datetime: '2025-04-13 06:30:00', duration: 30)
