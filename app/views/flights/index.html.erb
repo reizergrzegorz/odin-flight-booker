@@ -1,0 +1,32 @@
+<h1>Flight Search</h1>
+
+<%= form_with url: flights_path, method: :get, local: true do %>
+  <div>
+    <%= label_tag :departure_airport_id, "Departure Airport" %>
+    <%= select_tag :departure_airport_id, options_from_collection_for_select(@airports, :id, :code), prompt: "Select Departure Airport" %>
+  </div>
+
+  <div>
+    <%= label_tag :arrival_airport_id, "Arrival Airport" %>
+    <%= select_tag :arrival_airport_id, options_from_collection_for_select(@airports, :id, :code), prompt: "Select Arrival Airport" %>
+  </div>
+
+  <div>
+    <%= label_tag :date, "Flight Date" %>
+    <%= select_tag :date, options_for_select(@flights.map { |f| f.start_datetime.to_date }.uniq.sort), prompt: "Select Date" %>
+  </div>
+
+  <div>
+    <%= label_tag :passengers, "Number of Passengers" %>
+    <%= select_tag :passengers, options_for_select([1, 2, 3, 4]), prompt: "Select Passengers" %>
+  </div>
+
+  <div>
+    <%= submit_tag "Search" %>
+  </div>
+<% end %>
+
+<h2>Available Flights</h2>
+<% @flights.each do |flight| %>
+  <p><%= flight.departure_airport.code %> to <%= flight.arrival_airport.code %> at <%= flight.start_datetime %></p>
+<% end %>
