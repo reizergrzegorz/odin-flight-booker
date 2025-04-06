@@ -3,30 +3,44 @@
 <%= form_with url: flights_path, method: :get, local: true do %>
   <div>
     <%= label_tag :departure_airport_id, "Departure Airport" %>
-    <%= select_tag :departure_airport_id, options_from_collection_for_select(@airports, :id, :code), prompt: "Select Departure Airport" %>
+    <%= select_tag :departure_airport_id, options_from_collection_for_select(Airport.all, :id, :code, selected: params[:departure_airport_id]) %>
   </div>
 
   <div>
     <%= label_tag :arrival_airport_id, "Arrival Airport" %>
-    <%= select_tag :arrival_airport_id, options_from_collection_for_select(@airports, :id, :code), prompt: "Select Arrival Airport" %>
-  </div>
-
-  <div>
-    <%= label_tag :date, "Flight Date" %>
-    <%= select_tag :date, options_for_select(@flights.map { |f| f.start_datetime.to_date }.uniq.sort), prompt: "Select Date" %>
+    <%= select_tag :arrival_airport_id, options_from_collection_for_select(Airport.all, :id, :code, selected: params[:arrival_airport_id]) %>
   </div>
 
   <div>
     <%= label_tag :passengers, "Number of Passengers" %>
-    <%= select_tag :passengers, options_for_select([1, 2, 3, 4]), prompt: "Select Passengers" %>
+    <%= select_tag :passengers, options_for_select([1, 2, 3, 4], selected: params[:passengers]) %>
   </div>
 
   <div>
-    <%= submit_tag "Search" %>
+    <%= label_tag :flight_date, "Flight Date" %>
+    <%= select_tag :flight_date, options_for_select(Flight.pluck(:start_datetime).uniq.sort.map { |date| [date.strftime('%Y-%m-%d'), date] }, selected: params[:flight_date]) %>
   </div>
+
+  <%= submit_tag "Search" %>
 <% end %>
 
-<h2>Available Flights</h2>
-<% @flights.each do |flight| %>
-  <p><%= flight.departure_airport.code %> to <%= flight.arrival_airport.code %> at <%= flight.start_datetime %></p>
+<% if @flights.any? %>
+  <h2>Select Your Flight</h2>
+  <%= form_with url: new_booking_path, method: :get, local: true do %>
+    <%= hidden_field_tag :passengers, @num_passengers %>
+
+    <% @flights.each do |flight_hash| %>
+      <div>
+        <%= radio_button_tag :flight_id, flight_hash[:flight].id %>
+        <%= flight_hash[:flight].departure_airport.code %> to <%= flight_hash[:flight].arrival_airport.code %> 
+        at <%= flight_hash[:flight].start_datetime.strftime('%Y-%m-%d %H:%M') %>
+        (Duration: <%= flight_hash[:flight].duration %> minutes)
+      </div>
+    <% end %>
+
+    <%= submit_tag "Book Flight" %>
+  <% end %>
+<% else %>
+  <p>No flights found for your search.</p>
 <% end %>
+
